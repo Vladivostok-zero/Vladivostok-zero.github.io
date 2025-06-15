@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vladivostok-规则页</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --bg-color: #f9f9f9;
+            --text-color: #333;
+            --light-gray: #eee;
+            --gray-border: #ddd;
+            --white-color: #fff;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: var(--primary-color);
+            color: var(--white-color);
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .nav-links a {
+            color: var(--white-color);
+            text-decoration: none;
+            margin-left: 20px;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--light-gray);
+        }
+        
+        main {
+            padding: 30px 0;
+        }
+        
+        .page-title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--primary-color);
+        }
+        
+        .rule-section {
+            background-color: var(--white-color);
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 25px;
+            margin-bottom: 25px;
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .section-title {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            position: relative;
+            padding-left: 10px;
+        }
+        
+        .section-title::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 5px;
+            height: 20px;
+            background-color: var(--primary-color);
+            border-radius: 2px;
+        }
+        
+        .rule-list {
+            list-style-type: none;
+            margin-left: 20px;
+        }
+        
+        .rule-list li {
+            margin-bottom: 10px;
+            position: relative;
+            padding-left: 25px;
+        }
+        
+        .rule-list li::before {
+            content: "•";
+            color: var(--primary-color);
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+        
+        .highlight {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        footer {
+            background-color: var(--primary-color);
+            color: var(--white-color);
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 40px;
+        }
+        
+        .footer-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .nav-links {
+                margin-top: 10px;
+            }
+            
+            .nav-links a {
+                margin: 0 10px;
+            }
+            
+            .rule-section {
+                padding: 20px;
+            }
+        }
+        
+        .highlight:hover {
+            text-decoration: underline;
+        }
+        
+        .rule-list li:hover {
+            background-color: rgba(52, 152, 219, 0.05);
+            border-radius: 3px;
+            padding: 2px 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo">Vladivostok</div>
+            <nav class="nav-links">
+                <a href="https://vladivostok-zero.github.io/mainpage/">首页</a>
+                <a href="https://vladivostok-zero.github.io/rulepage/">规则中心</a>
+                <a href="#">帮助中心(暂未开通)</a>
+            </nav>
+        </div>
+    </header>
+    
+    <div class="container">
+        <main>
+            <h1 class="page-title">用户使用规则</h1>
+            
+            <section class="rule-section">
+                <h2 class="section-title">一、用户行为规范</h2>
+                <ul class="rule-list">
+                    <li><span class="highlight">文明交流</span>：禁止发布歧视、诽谤等不文明言论，尊重他人观点和隐私。骂人请到八卦墙。</li>
+                    <li><span class="highlight">禁止违规内容</span>：不得发布色情、暴力、赌博、违法犯罪等违反法律法规的信息。</li>
+                    <li><span class="highlight">禁止广告营销</span>：严禁发布任何形式的广告、推广链接或垃圾信息。</li>
+                    <li><span class="highlight">内容健康</span>：聊天内容需符合公序良俗，不传播谣言、虚假信息或负能量内容。</li>
+                </ul>
+            </section>
+            
+            <section class="rule-section">
+                <h2 class="section-title">二、账号使用规则</h2>
+                <ul class="rule-list">
+                    <li><span class="highlight">账号注册</span>：需使用真实手机号注册，一人仅限一个账号，禁止盗用他人信息。</li>
+                    <li><span class="highlight">账号安全</span>：妥善保管密码，不得将账号借给他人使用，因账号泄露导致的后果自行承担。</li>
+                    <li><span class="highlight">账号信息</span>：个人资料需真实有效，不得使用虚假头像或昵称，禁止冒充他人身份。</li>
+                    <li><span class="highlight">账号注销</span>：如需注销账号，可通过客服申请，注销后所有数据将无法恢复。</li>
+                </ul>
+            </section>
+            
+            <section class="rule-section">
+                <h2 class="section-title">三、聊天内容管理</h2>
+                <ul class="rule-list">
+                    <li><span class="highlight">内容审核</span>：系统会实时审核聊天内容，违规信息将被删除，严重者永久封禁账号。</li>
+                    <li><span class="highlight">隐私保护</span>：未经允许，不得公开他人聊天记录或个人信息，违者将承担法律责任。</li>
+                    <li><span class="highlight">聊天环境</span>：维护良好聊天氛围，禁止刷屏、恶意骚扰或持续发送无关信息。</li>
+                    <li><span class="highlight">版权保护</span>：不得发布侵犯他人知识产权的内容（如盗版、侵权图片等）。</li>
+                </ul>
+            </section>
+            
+            <section class="rule-section">
+                <h2 class="section-title">四、违规处理机制</h2>
+                <ul class="rule-list">
+                    <li><span class="highlight">轻度违规</span>：首次违规将收到警告，限制部分功能使用（如发言频率）。</li>
+                    <li><span class="highlight">中度违规</span>：多次违规或发布较严重违规内容，将临时封禁账号（1-7天）。</li>
+                    <li><span class="highlight">重度违规</span>：发布严重违规内容或多次中度违规，直接永久封禁账号，不予解封。</li>
+                    <li><span class="highlight">申诉渠道</span>：对违规处理有异议，可找管理员提交申诉，3个工作日内反馈结果。</li>
+                </ul>
+            </section>
+            
+            <section class="rule-section">
+                <h2 class="section-title">五、其他说明</h2>
+                <ul class="rule-list">
+                    <li>本规则最终解释权归平台所有，平台有权根据需要调整规则，调整后将在首页公示。</li>
+                    <li>如遇问题，可通过邮件联系管理员：<a href="mailto:furuyashouran0321@foxmail.com" class="highlight">furuyashouran0321@foxmail.com</a>，我们将在72小时内回复。</li>
+                    <li>使用本平台即视为同意遵守以上规则，违反规则造成的一切后果由用户自行承担。</li>
+                    <li>平台保留对规则的更新和完善权利，建议定期查看规则页了解最新内容。</li>
+                </ul>
+            </section>
+        </main>
+    </div>
+    
+    <footer>
+        <div class="footer-content">
+            <p>© 2025 聊天平台 版权所有 | 客服邮箱：furuyashouran0321@foxmail.com</p>
+        </div>
+    </footer>
+</body>
+</html>
