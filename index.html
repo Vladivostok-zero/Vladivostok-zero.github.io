@@ -16,21 +16,16 @@
     <input type="password" id="password" placeholder="输入口令" style="padding: 10px; font-size: 16px; border-radius: 5px; border: 1px solid #ddd; width: 280px;">  
     <button id="enterBtn" style="padding: 10px 20px; font-size: 16px; background-color: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer;">进入主页</button>
   </div>
-<script>  
-// 设置正确口令（可自定义）  
+<script>    
 const correctPassword = "123456";  
-// 获取DOM元素  
 const enterBtn = document.getElementById("enterBtn");  
 const passwordInput = document.getElementById("password");  
 
-// 按钮点击事件  
 enterBtn.addEventListener("click", function() {  
     const inputPassword = passwordInput.value;  
-    if (inputPassword === correctPassword) {  
-        // 口令正确时跳转  
+    if (inputPassword === correctPassword) {   
         window.location.href = "mainpage.html";  
     } else {  
-        // 口令错误时提示  
         alert("你个傻屌，口令错误，请重新输入！");  
         passwordInput.value = ""; // 清空输入框  
     }  
@@ -38,7 +33,7 @@ enterBtn.addEventListener("click", function() {
 </script>
   
   <h3 style="color: #2c3e50; text-align: center; margin-top: 50px;">八卦墙</h3>
-  <p style="color: DE6F00; font-size: 16px; line-height: 1.6; margin: 20px auto; max-width: 600px; padding: 15px; background-color: #f9f9f9; border-left: 3px solid blue;">
+  <p style="color: DE6F00; font-size: 16px; line-height: 1.6; margin: 20px auto; max-width: 600px; padding: 15px; background-color: #f9f9f9; border-left: #De6f00;">
     xyl疑似超雄，最近有过激反应。<br>
     比如蓄意报复他人，口吐芬芳等
   </p>
