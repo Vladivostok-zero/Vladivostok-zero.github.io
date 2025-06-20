@@ -24,6 +24,40 @@
       @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
     }
   </style>
+  <script>
+  const auth0 = new auth0.WebAuth({
+    domain: 'dev-55mq00i1iywjkxx8.us.auth0.com',
+    clientID: '7W7MQvqAvghooYx8p3PQXkcplOGLs0I4',
+    redirectUri: 'https://vladivostok-zero.github.com/mainpage.html',
+    responseType: 'code',
+    scope: 'openid profile email'
+  });
+
+  document.getElementById('login-btn').addEventListener('click', () => {
+    auth0.authorize({
+      connection: 'Username-Password-Authentication'
+    });
+  });
+
+  document.getElementById('register-btn').addEventListener('click', () => {
+    auth0.authorize({
+      screen_hint: 'signup',
+      connection: 'Username-Password-Authentication'
+    });
+  });
+    
+  window.addEventListener('load', () => {
+    auth0.parseHash((err, authResult) => {
+      if (authResult && authResult.accessToken && authResult.idToken) {
+        localStorage.setItem('access_token', authResult.accessToken);
+        localStorage.setItem('id_token', authResult.idToken);
+        window.location.href = '/';
+      } else if (err) {
+        console.error('登录失败:', err);
+      }
+    });
+  });
+  </script>
 </head>
 <body class="font-inter bg-gray-50 text-dark smooth-scroll">
   <!-- 顶部导航栏 -->
@@ -224,7 +258,7 @@
         <div>
           <div class="flex items-center space-x-2 mb-4">
             <i class="fas fa-comments text-primary text-2xl"></i>
-            <span class="text-xl font-bold text-white">ChatHub</span>
+            <span class="text-xl font-bold text-white">Vladivostok</span>
           </div>
           <p class="mb-4">随时随地，畅快聊天，让沟通更简单。</p>
           <div class="flex space-x-4">
