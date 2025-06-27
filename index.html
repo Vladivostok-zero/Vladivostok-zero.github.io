@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vladivostok</title>
+  <style>
+    .gossip-item {
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: 5px;
+      background-color: #f9f9f9;
+      border-left: 3px solid #3498db;
+    }
+    .gossip-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 5px;
+    }
+    .gossip-author {
+      font-weight: bold;
+      color: #2c3e50;
+    }
+    .gossip-time {
+      font-size: 14px;
+      color: #95a5a6;
+    }
+    .gossip-content {
+      color: #333;
+      line-height: 1.6;
+    }
+    .admin-panel {
+      margin-top: 30px;
+      text-align: center;
+    }
+    .admin-btn {
+      padding: 8px 15px;
+      background-color: #e74c3c;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+    .new-gossip-form {
+      max-width: 600px;
+      margin: 30px auto;
+      padding: 20px;
+      background-color: #f5f5f5;
+      border-radius: 5px;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    .form-group input, .form-group textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+    .form-group textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+    .submit-btn {
+      padding: 10px 20px;
+      background-color: #27ae60;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .comment-toggle {
+      background: none;
+      border: none;
+      color: #3498db;
+      cursor: pointer;
+      font-size: 14px;
+      margin-top: 5px;
+      display: flex;
+      align-items: center;
+    }
+    .comment-toggle i {
+      margin-right: 5px;
+    }
+    .comments-container {
+      margin-top: 15px;
+      padding: 10px;
+      border-left: 2px solid #ddd;
+      display: none;
+    }
+    .comment-item {
+      padding: 10px;
+      margin: 10px 0;
+      background-color: #f5f5f5;
+      border-radius: 3px;
+    }
+    .comment-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
+    .comment-content {
+      color: #555;
+    }
+    .new-comment-form {
+      margin-top: 15px;
+      padding: 10px;
+      background-color: #f9f9f9;
+      border-radius: 3px;
+      display: none;
+    }
+    .comment-submit {
+      padding: 5px 10px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <h1 style="color: #3498db; text-align: center;">欢迎来到Vladivostok</h1> 
+  <p style="font-size: 18px; text-align: center; margin-bottom: 30px;">
+    一个社交网站<br>
+    可以在这里注册账户并聊天<br>
+    某些背刺姐无权访问。
+  </p> 
+  <div style="text-align: center; margin: 30px 0;">
+    <input type="password" id="password" placeholder="输入口令" style="padding: 10px; font-size: 16px; border-radius: 5px; border: 1px solid #ddd; width: 280px;">  
+    <button id="enterBtn" style="padding: 10px 20px; font-size: 16px; background-color: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer;">进入主页</button>
+  </div>
+<script>  
+// 设置正确口令（可自定义）  
+const correctPassword = "123456";  
+// 获取DOM元素  
+const enterBtn = document.getElementById("enterBtn");  
+const passwordInput = document.getElementById("password");  
+// 按钮点击事件  
+enterBtn.addEventListener("click", function() {  
+    const inputPassword = passwordInput.value;  
+    if (inputPassword === correctPassword) {  
+        // 口令正确时跳转  
+        window.location.href = "page2.html";  
+    } else {  
+        // 口令错误时提示  
+        alert("你个傻屌，口令错误，请重新输入！");  
+        passwordInput.value = ""; // 清空输入框  
+    }  
+});  
+</script>
+
+  <h3 style="color: #2c3e50; text-align: center; margin-top: 50px;">八卦墙</h3>
+  
+  <!-- 新八卦发布表单 -->
+  <div class="new-gossip-form">
+    <h4 style="text-align: center; color: #3498db; margin-bottom: 20px;">发布新八卦</h4>
+    <form id="gossipForm">
+      <div class="form-group">
+        <label for="author">昵称</label>
+        <input type="text" id="author" placeholder="请输入你的昵称（留空为匿名）">
+      </div>
+      <div class="form-group">
+        <label for="gossipContent">八卦内容</label>
+        <textarea id="gossipContent" placeholder="快来分享你知道的八卦吧..."></textarea>
+      </div>
+      <button type="submit" class="submit-btn">发布八卦</button>
+    </form>
+  </div>
+  
+  <!-- 八卦列表 -->
+  <div id="gossipWall" style="max-width: 600px; margin: 0 auto;">
+    <div class="gossip-item" data-id="1">
+      <div class="gossip-header">
+        <span class="gossip-author">匿名用户</span>
+        <span class="gossip-time">2025-06-27 10:00</span>
+      </div>
+      <div class="gossip-content">
+        xyl疑似超雄，最近有过激反应。比如蓄意报复他人，口吐芬芳等
+      </div>
+      <button class="comment-toggle" data-id="1">
+        <i>💬</i> 查看/收起评论 (0)
+      </button>
+      <div class="comments-container" data-id="1">
+        <div class="new-comment-form" data-id="1">
+          <div class="form-group" style="margin-bottom: 5px;">
+            <input type="text" id="commentAuthor1" placeholder="评论昵称（留空为匿名）" style="padding: 5px; font-size: 14px;">
+          </div>
+          <div class="form-group" style="margin-bottom: 5px;">
+            <textarea id="commentContent1" placeholder="写下你的评论..." style="padding: 5px; font-size: 14px; min-height: 40px;"></textarea>
+          </div>
+          <button class="comment-submit" data-id="1">发布评论</button>
+        </div>
+        <div class="comments-list" data-id="1"></div>
+      </div>
+    </div>
+    
+    <!-- 这里会通过JS动态添加新八卦 -->
+  </div>
+  
+  <!-- 管理员版入口 -->
+  <div class="admin-panel">
+    <h3 style="color: #e74c3c; text-align: center; margin-top: 50px;">管理员入口</h3>
+    <button id="adminBtn" class="admin-btn">进入管理员版</button>
+  </div>
+
+<script>
+  // 获取DOM元素
+  const gossipForm = document.getElementById('gossipForm');
+  const gossipWall = document.getElementById('gossipWall');
+  const adminBtn = document.getElementById('adminBtn');
+  const commentToggles = document.querySelectorAll('.comment-toggle');
+  const commentSubmits = document.querySelectorAll('.comment-submit');
+  
+  // 发布新八卦
+  gossipForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    let author = document.getElementById('author').value.trim();
+    const content = document.getElementById('gossipContent').value.trim();
+    
+    if (!content) {
+      alert('八卦内容不能为空！');
+      return;
+    }
+    
+    // 昵称为空时设为匿名
+    if (!author) author = '匿名用户';
+    
+    // 创建新八卦元素
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const timeStr = `${year}-${month}-${day} ${hours}:${minutes}`;
+    const gossipId = Date.now(); // 生成唯一ID
+    
+    const gossipItem = document.createElement('div');
+    gossipItem.className = 'gossip-item';
+    gossipItem.dataset.id = gossipId;
+    gossipItem.innerHTML = `
+      <div class="gossip-header">
+        <span class="gossip-author">${author}</span>
+        <span class="gossip-time">${timeStr}</span>
+      </div>
+      <div class="gossip-content">
+        ${content}
+      </div>
+      <button class="comment-toggle" data-id="${gossipId}">
+        <i>💬</i> 查看/收起评论 (0)
+      </button>
+      <div class="comments-container" data-id="${gossipId}">
+        <div class="new-comment-form" data-id="${gossipId}">
+          <div class="form-group" style="margin-bottom: 5px;">
+            <input type="text" id="commentAuthor${gossipId}" placeholder="评论昵称（留空为匿名）" style="padding: 5px; font-size: 14px;">
+          </div>
+          <div class="form-group" style="margin-bottom: 5px;">
+            <textarea id="commentContent${gossipId}" placeholder="写下你的评论..." style="padding: 5px; font-size: 14px; min-height: 40px;"></textarea>
+          </div>
+          <button class="comment-submit" data-id="${gossipId}">发布评论</button>
+        </div>
+        <div class="comments-list" data-id="${gossipId}"></div>
+      </div>
+    `;
+    
+    // 添加到八卦墙顶部
+    gossipWall.insertBefore(gossipItem, gossipWall.firstChild);
+    
+    // 绑定新生成的评论按钮事件
+    bindCommentEvents();
+    
+    // 清空表单
+    document.getElementById('author').value = '';
+    document.getElementById('gossipContent').value = '';
+  });
+  
+  // 管理员版入口点击事件
+  adminBtn.addEventListener('click', function() {
+    const adminPassword = prompt('请输入管理员密码：');
+    
+    // 这里设置管理员密码，可自定义
+    if (adminPassword === 'admin123') {
+      alert('管理员密码正确，正在进入管理员版...');
+      window.location.href = "admin.html"; // 跳转到管理员页面
+    } else {
+      alert('管理员密码错误，无权访问！');
+    }
+  });
+  
+  // 绑定评论相关事件（动态生成元素需重新绑定）
+  function bindCommentEvents() {
+    // 评论展开/折叠
+    commentToggles.forEach(toggle => {
+      toggle.addEventListener('click', function() {
+        const gossipId = this.dataset.id;
+        const commentsContainer = document.querySelector(`.comments-container[data-id="${gossipId}"]`);
+        const commentCount = this.querySelector('span') || this;
+        
+        if (commentsContainer.style.display === 'block') {
+          commentsContainer.style.display = 'none';
+          this.innerHTML = '<i>💬</i> 查看评论 (0)';
+        } else {
+          commentsContainer.style.display = 'block';
+          this.innerHTML = '<i>💬</i> 收起评论 (0)';
+        }
+      });
+    });
+    
+    // 发布评论
+    commentSubmits.forEach(button => {
+      button.addEventListener('click', function() {
+        const gossipId = this.dataset.id;
+        let author = document.getElementById(`commentAuthor${gossipId}`).value.trim();
+        const content = document.getElementById(`commentContent${gossipId}`).value.trim();
+        
+        if (!content) {
+          alert('评论内容不能为空！');
+          return;
+        }
+        
+        // 昵称为空时设为匿名
+        if (!author) author = '匿名用户';
+        
+        // 创建评论元素
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const timeStr = `${year}-${month}-${day} ${hours}:${minutes}`;
+        
+        const commentsList = document.querySelector(`.comments-list[data-id="${gossipId}"]`);
+        const commentItem = document.createElement('div');
+        commentItem.className = 'comment-item';
+        commentItem.innerHTML = `
+          <div class="comment-header">
+            <span>${author}</span>
+            <span>${timeStr}</span>
+          </div>
+          <div class="comment-content">
+            ${content}
+          </div>
+        `;
+        
+        // 添加到评论列表顶部
+        commentsList.insertBefore(commentItem, commentsList.firstChild);
+        
+        // 更新评论计数
+        const commentToggle = document.querySelector(`.comment-toggle[data-id="${gossipId}"]`);
+        const count = commentsList.children.length;
+        commentToggle.innerHTML = `<i>💬</i> 查看/收起评论 (${count})`;
+        
+        // 清空表单
+        document.getElementById(`commentAuthor${gossipId}`).value = '';
+        document.getElementById(`commentContent${gossipId}`).value = '';
+      });
+    });
+  }
+  
+  // 初始化绑定事件
+  bindCommentEvents();
+</script>
+</body>
+</html>

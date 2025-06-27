@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vladivostok - 管理员版</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    .admin-header {
+      text-align: center;
+      padding: 20px;
+      background-color: #3498db;
+      color: white;
+      margin-bottom: 30px;
+      border-radius: 5px;
+    }
+    .admin-header h1 {
+      margin: 0;
+    }
+    .admin-panel {
+      max-width: 900px;
+      margin: 0 auto;
+      background-color: white;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .section-title {
+      color: #2c3e50;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+    .gossip-list {
+      list-style: none;
+      padding: 0;
+    }
+    .gossip-item {
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 5px;
+      background-color: #f9f9f9;
+      border-left: 3px solid #3498db;
+      position: relative;
+    }
+    .gossip-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 5px;
+    }
+    .gossip-author {
+      font-weight: bold;
+      color: #2c3e50;
+    }
+    .gossip-time {
+      font-size: 14px;
+      color: #95a5a6;
+    }
+    .gossip-actions {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      display: flex;
+      gap: 5px;
+    }
+    .action-btn {
+      padding: 5px 10px;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 12px;
+      color: white;
+    }
+    .edit-btn {
+      background-color: #27ae60;
+    }
+    .delete-btn {
+      background-color: #e74c3c;
+    }
+    .gossip-content {
+      color: #333;
+      line-height: 1.6;
+      margin-bottom: 10px;
+    }
+    .comment-list {
+      list-style: none;
+      padding-left: 20px;
+      margin-top: 10px;
+    }
+    .comment-item {
+      padding: 10px;
+      margin-bottom: 10px;
+      background-color: #f5f5f5;
+      border-radius: 3px;
+      border-left: 2px solid #ddd;
+    }
+    .comment-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
+    .comment-actions {
+      display: flex;
+      gap: 5px;
+    }
+    .approve-btn {
+      background-color: #27ae60;
+    }
+    .reject-btn {
+      background-color: #e74c3c;
+    }
+    .user-list {
+      list-style: none;
+      padding: 0;
+    }
+    .user-item {
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 5px;
+      background-color: #f9f9f9;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: #ddd;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+    .user-details h4 {
+      margin: 0;
+      font-size: 16px;
+    }
+    .user-details p {
+      margin: 0;
+      font-size: 14px;
+      color: #777;
+    }
+    .ban-btn {
+      background-color: #e74c3c;
+      padding: 8px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      color: white;
+      font-size: 14px;
+    }
+    .empty-state {
+      text-align: center;
+      padding: 30px;
+      color: #95a5a6;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-header">
+    <h1>管理员控制面板</h1>
+    <p>欢迎进入Vladivostok管理后台</p>
+  </div>
+
+  <div class="admin-panel">
+    <h2 class="section-title">八卦管理</h2>
+    <ul id="gossipList" class="gossip-list">
+      <!-- 八卦列表将通过JS动态生成 -->
+      <li class="empty-state">暂无八卦数据</li>
+    </ul>
+
+    <h2 class="section-title">评论审核</h2>
+    <ul id="commentList" class="gossip-list">
+      <!-- 待审核评论将通过JS动态生成 -->
+      <li class="empty-state">暂无待审核评论</li>
+    </ul>
+
+    <h2 class="section-title">用户管理</h2>
+    <ul id="userList" class="user-list">
+      <!-- 用户列表将通过JS动态生成 -->
+      <li class="empty-state">暂无用户数据</li>
+    </ul>
+  </div>
+
+<script>
+  // 模拟数据 - 实际项目中应从服务器获取
+  const mockGossips = [
+    {
+      id: 1,
+      author: '匿名用户',
+      time: '2025-06-27 10:00',
+      content: 'xyl疑似超雄，最近有过激反应。比如蓄意报复他人，口吐芬芳等',
+      comments: [
+        { id: 11, author: '路人甲', time: '2025-06-27 10:10', content: '我也见过他这样', approved: true },
+        { id: 12, author: '匿名用户', time: '2025-06-27 10:15', content: '可能压力太大了吧', approved: false }
+      ]
+    },
+    {
+      id: 2,
+      author: '知情人士',
+      time: '2025-06-27 14:30',
+      content: '听说abc最近和def走得很近，以前不是和ghi在一起吗？',
+      comments: [
+        { id: 21, author: '吃瓜群众', time: '2025-06-27 14:40', content: '真的假的？我不信', approved: true },
+        { id: 22, author: '匿名用户', time: '2025-06-27 14:45', content: '我有证据！', approved: false }
+      ]
+    }
+  ];
+  
+  const mockUsers = [
+    { id: 1, name: '张三', avatar: 'ZS', role: '普通用户', active: true },
+    { id: 2, name: '李四', avatar: 'LS', role: '普通用户', active: true },
+    { id: 3, name: '管理员', avatar: 'AD', role: '管理员', active: true }
+  ];
+
+  // DOM元素
+  const gossipListEl = document.getElementById('gossipList');
+  const commentListEl = document.getElementById('commentList');
+  const userListEl = document.getElementById('userList');
+
+  // 渲染八卦列表
+  function renderGossipList(gossips) {
+    if (gossips.length === 0) {
+      gossipListEl.innerHTML = '<li class="empty-state">暂无八卦数据</li>';
+      return;
+    }
+    
+    gossipListEl.innerHTML = '';
+    gossips.forEach(gossip => {
+      const gossipEl = document.createElement('li');
+      gossipEl.className = 'gossip-item';
+      gossipEl.innerHTML = `
+        <div class="gossip-header">
+          <span class="gossip-author">${gossip.author}</span>
+          <span class="gossip-time">${gossip.time}</span>
+        </div>
+        <div class="gossip-content">
+          ${gossip.content}
+        </div>
+        <div class="gossip-actions">
+          <button class="action-btn edit-btn" data-id="${gossip.id}">编辑</button>
+          <button class="action-btn delete-btn" data-id="${gossip.id}">删除</button>
+        </div>
+        <ul class="comment-list">
+          ${gossip.comments.map(comment => `
+            <li class="comment-item">
+              <div class="comment-header">
+                <span>${comment.author}</span>
+                <span>${comment.time}</span>
+                <div class="comment-actions">
+                  <button class="action-btn ${comment.approved ? 'approve-btn' : 'reject-btn'}" 
+                          data-id="${comment.id}" 
+                          data-gossip-id="${gossip.id}">
+                    ${comment.approved ? '已通过' : '审核'}
+                  </button>
+                </div>
+              </div>
+              <div class="comment-content">
+                ${comment.content}
+              </div>
+            </li>
+          `).join('')}
+        </ul>
+      `;
+      gossipListEl.appendChild(gossipEl);
+    });
+    
+    // 绑定事件
+    bindGossipEvents();
+  }
+
+  // 渲染评论审核列表
+  function renderCommentList(gossips) {
+    const pendingComments = gossips.flatMap(gossip => 
+      gossip.comments.filter(comment => !comment.approved)
+    );
+    
+    if (pendingComments.length === 0) {
+      commentListEl.innerHTML = '<li class="empty-state">暂无待审核评论</li>';
+      return;
+    }
+    
+    commentListEl.innerHTML = '';
+    pendingComments.forEach(comment => {
+      const commentEl = document.createElement('li');
+      commentEl.className = 'gossip-item';
+      commentEl.innerHTML = `
+        <div class="gossip-header">
+          <span class="gossip-author">来自八卦: ${getGossipTitle(comment.gossipId)}</span>
+          <span class="gossip-time">${comment.time}</span>
+        </div>
+        <div class="gossip-content">
+          ${comment.content}
+        </div>
+        <div class="gossip-actions">
+          <button class="action-btn approve-btn" data-id="${comment.id}">通过</button>
+          <button class="action-btn reject-btn" data-id="${comment.id}">拒绝</button>
+        </div>
+      `;
+      commentListEl.appendChild(commentEl);
+    });
+    
+    // 绑定事件
+    bindCommentEvents();
+  }
+
+  // 渲染用户列表
+  function renderUserList(users) {
+    if (users.length === 0) {
+      userListEl.innerHTML = '<li class="empty-state">暂无用户数据</li>';
+      return;
+    }
+    
+    userListEl.innerHTML = '';
+    users.forEach(user => {
+      const userEl = document.createElement('li');
+      userEl.className = 'user-item';
+      userEl.innerHTML = `
+        <div class="user-info">
+          <div class="user-avatar">${user.avatar}</div>
+          <div class="user-details">
+            <h4>${user.name}</h4>
+            <p>${user.role} | ${user.active ? '活跃' : '已封禁'}</p>
+          </div>
+        </div>
+        <button class="ban-btn" data-id="${user.id}">
+          ${user.active ? '封禁账号' : '解除封禁'}
+        </button>
+      `;
+      userListEl.appendChild(userEl);
+    });
+    
+    // 绑定事件
+    bindUserEvents();
+  }
+
+  // 获取八卦标题（简化模拟）
+  function getGossipTitle(gossipId) {
+    const gossip = mockGossips.find(g => g.id === gossipId);
+    return gossip ? gossip.content.substring(0, 20) + '...' : '未知八卦';
+  }
+
+  // 绑定八卦管理事件
+  function bindGossipEvents() {
+    // 编辑八卦
+    document.querySelectorAll('.edit-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const id = parseInt(this.dataset.id);
+        alert(`编辑八卦 ID: ${id}`);
+        // 实际项目中应跳转到编辑页面或显示编辑表单
+      });
+    });
+    
+    // 删除八卦
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const id = parseInt(this.dataset.id);
+        if (confirm(`确定要删除ID为${id}的八卦吗？此操作不可恢复！`)) {
+          alert(`八卦 ID: ${id} 已删除`);
+          // 实际项目中应发送删除请求到服务器
+        }
+      });
+    });
+  }
+
+  // 绑定评论审核事件
+  function bindCommentEvents() {
+    // 审核评论
+    document.querySelectorAll('.approve-btn, .reject-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const id = parseInt(this.dataset.id);
+        const isApprove = this.classList.contains('approve-btn');
+        const action = isApprove ? '通过' : '拒绝';
+        
+        if (confirm(`确定要${action}这条评论吗？`)) {
+          alert(`评论 ID: ${id} 已${action}`);
+          // 实际项目中应发送审核请求到服务器
+          
+          // 模拟更新状态（仅用于演示）
+          if (isApprove) {
+            this.textContent = '已通过';
+            this.classList.remove('reject-btn');
+            this.classList.add('approve-btn');
+          } else {
+            this.textContent = '已拒绝';
+            this.classList.remove('approve-btn');
+            this.classList.add('reject-btn');
+          }
+        }
+      });
+    });
+  }
+
+  // 绑定用户管理事件
+  function bindUserEvents() {
+    // 封禁/解封用户
+    document.querySelectorAll('.ban-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const id = parseInt(this.dataset.id);
+        const isActive = this.textContent.includes('封禁');
+        const action = isActive ? '封禁' : '解除封禁';
+        
+        if (confirm(`确定要${action}该用户吗？`)) {
+          alert(`用户 ID: ${id} 已${action}`);
+          // 实际项目中应发送请求到服务器更新用户状态
+          
+          // 模拟更新状态（仅用于演示）
+          if (isActive) {
+            this.textContent = '解除封禁';
+            this.previousElementSibling.querySelector('p').textContent = '普通用户 | 已封禁';
+          } else {
+            this.textContent = '封禁账号';
+            this.previousElementSibling.querySelector('p').textContent = '普通用户 | 活跃';
+          }
+        }
+      });
+    });
+  }
+
+  // 初始化页面
+  document.addEventListener('DOMContentLoaded', function() {
+    renderGossipList(mockGossips);
+    renderCommentList(mockGossips);
+    renderUserList(mockUsers);
+  });
+</script>
+</body>
+</html>
