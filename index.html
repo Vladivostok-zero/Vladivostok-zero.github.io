@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vladivostok - 社交聊天平台</title>
+    <!-- 引入外部样式 -->
+    <link rel="stylesheet" href="style.css">
+    <!-- 引入密码加密库 -->
+    <script src="https://cdn.jsdelivr.net/npm/bcryptjs@2.4.3/dist/bcrypt.min.js"></script>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav>
+        <div class="logo">Vladivostok</div>
+        <div class="nav-links">
+            <a href="#">首页</a>
+            <a href="#">群组</a>
+            <a href="#">圈子</a>
+            <a href="#">八卦墙</a>
+        </div>
+        <div class="user-actions" id="userActions">
+            <button id="loginBtn">登录</button>
+            <button id="registerBtn">注册</button>
+        </div>
+    </nav>
+
+    <!-- 注册弹窗 -->
+    <div id="registerModal" class="modal">
+        <h3>注册账号</h3>
+        <input type="text" id="regNickname" placeholder="昵称（唯一）" style="width: 100%; padding: 0.5rem; margin: 0.5rem 0;">
+        <input type="password" id="regPassword" placeholder="密码" style="width: 100%; padding: 0.5rem; margin: 0.5rem 0;">
+        <button id="submitRegister">注册</button>
+        <button onclick="closeModal('registerModal', 'registerOverlay')">取消</button>
+    </div>
+
+    <!-- 登录弹窗 -->
+    <div id="loginModal" class="modal">
+        <h3>登录账号</h3>
+        <input type="text" id="loginNickname" placeholder="昵称" style="width: 100%; padding: 0.5rem; margin: 0.5rem 0;">
+        <input type="password" id="loginPassword" placeholder="密码" style="width: 100%; padding: 0.5rem; margin: 0.5rem 0;">
+        <button id="submitLogin">登录</button>
+        <button onclick="closeModal('loginModal', 'loginOverlay')">取消</button>
+    </div>
+
+    <!-- 弹窗覆盖层 -->
+    <div id="registerOverlay" class="modal-overlay"></div>
+    <div id="loginOverlay" class="modal-overlay"></div>
+
+    <!-- 主要内容 -->
+    <div class="container">
+        <div class="hero">
+            <h1>连接有趣的人，分享精彩的事</h1>
+            <p>在这里，你可以加入群组畅聊，创建专属圈子，私聊好友，还能在八卦墙分享新鲜事</p>
+        </div>
+
+        <div class="features">
+            <div class="feature-card">
+                <h3>群组聊天</h3>
+                <p>创建或加入兴趣群组，和志同道合的人实时交流</p>
+                <button>进入群组</button>
+            </div>
+            <div class="feature-card">
+                <h3>私聊好友</h3>
+                <p>一对一私密聊天，分享专属话题</p>
+                <button>找好友聊聊</button>
+            </div>
+            <div class="feature-card">
+                <h3>兴趣圈子</h3>
+                <p>类似喜马拉雅圈子，分享动态、讨论专属领域</p>
+                <button>浏览圈子</button>
+            </div>
+            <div class="feature-card">
+                <h3>八卦墙</h3>
+                <p>匿名或公开分享新鲜事，围观热门话题</p>
+                <button>去看看</button>
+            </div>
+        </div>
+
+        <div class="gossip-wall">
+            <h2>热门八卦墙</h2>
+            <div class="gossip-item">
+                <div class="content">听说隔壁班的小明要去参加选秀了？</div>
+                <div class="meta">发布于 2小时前 · 32人点赞 · 15条评论</div>
+            </div>
+            <div class="gossip-item">
+                <div class="content">学校门口新开的奶茶店买一送一，快去冲！</div>
+                <div class="meta">发布于 5小时前 · 88人点赞 · 32条评论</div>
+            </div>
+            <div class="gossip-item">
+                <div class="content">今天的晚霞也太好看了吧！谁拍到了？</div>
+                <div class="meta">发布于 昨天 · 125人点赞 · 56条评论</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 引入 Supabase SDK 和外部脚本 -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="script.js"></script>
+</body>
+</html>
