@@ -1,10 +1,4 @@
-// 在 script.js 开头加这段
-document.getElementById('loginBtn').addEventListener('click', () => {
-    alert('登录按钮被点击了！');
-});
-document.getElementById('registerBtn').addEventListener('click', () => {
-    alert('注册按钮被点击了！');
-});
+
 // 等待页面加载完成后执行
 document.addEventListener('DOMContentLoaded', function() {
     // 初始化 Supabase
