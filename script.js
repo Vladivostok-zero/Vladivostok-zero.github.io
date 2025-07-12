@@ -1,5 +1,3 @@
-
-// 等待页面加载完成后执行
 document.addEventListener('DOMContentLoaded', function() {
     // 初始化 Supabase
     const supabaseUrl = 'https://ctvqjojvaeuvkwztsypr.supabase.co';
