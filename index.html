@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vladivostok - 社交聊天平台</title>
+    <!-- 引入密码加密库 -->
+    <script src="https://cdn.jsdelivr.net/npm/bcryptjs@2.4.3/dist/bcrypt.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f7;
+            color: #333;
+        }
+
+        /* 导航栏 */
+        nav {
+            background-color: #2c3e50;
+            color: white;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+
+        .nav-links a:hover {
+            background-color: #34495e;
+        }
+
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .user-actions button {
+            background: #3498db;
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .user-actions button:hover {
+            background: #2980b9;
+        }
+
+        .user-actions span {
+            padding: 0 0.5rem;
+        }
+
+        /* 主要内容区 */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 5%;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #2c3e50;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* 功能卡片区 */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+
+        .feature-card h3 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .feature-card p {
+            color: #7f8c8d;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-card button {
+            background: #3498db;
+            border: none;
+            color: white;
+            padding: 0.7rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .feature-card button:hover {
+            background: #2980b9;
+        }
+
+        /* 八卦墙预览 */
+        .gossip-wall {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .gossip-wall h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #2c3e50;
+        }
+
+        .gossip-item {
+            border-bottom: 1px solid #eee;
+            padding: 1rem 0;
+        }
+
+        .gossip-item:last-child {
+            border-bottom: none;
+        }
+
+        .gossip-item .content {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .gossip-item .meta {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        /* 弹窗样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            z-index: 9999;
+            width: 90%;
+            max-width: 500px;
+            border: 2px solid #3498db;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            .nav-links {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav>
+        <div class="logo">Vladivostok</div>
+        <div class="nav-links">
+            <a href="#">首页</a>
+            <a href="#">群组</a>
+            <a href="#">圈子</a>
+            <a href="#">八卦墙</a>
+        </div>
+        <div class="user-actions" id="userActions">
+            <button id="loginBtn">登录</button>
+            <button id="registerBtn">注册</button>
+        </div>
+    </nav>
+
+    <!-- 注册弹窗（昵称+密码） -->
+    <div id="registerModal" class="modal">
+        <h3>注册账号</h3>
+        <input type="text" id="regNickname" placeholder="昵称（唯一）" style="width: 100%; padding: 0.5rem; margin: 0.5rem 0;">
+        <input type="password" id="regPassword" placeholder="密码" style="width: 100%; padding: 0.5rem; margin: 0.5rem 0;">
+        <button id="submitRegister">注册</button>
+        <button onclick="closeModal('registerModal')">取消</button>
+    </div>
+
+    <!-- 登录弹窗（昵称+密码） -->
+    <div id="loginModal" class="modal">
+        <h3>登录账号</h3>
+        <input type="text" id="loginNickname" placeholder="昵称" style="width: 100%; padding: 0.5rem; margin: 0.5rem 0;">
+        <input type="password" id="loginPassword" placeholder="密码" style="width: 100%; padding: 0.5rem; margin: 0.5rem 0;">
+        <button id="submitLogin">登录</button>
+        <button onclick="closeModal('loginModal')">取消</button>
+    </div>
+
+    <!-- 主要内容 -->
+    <div class="container">
+        <div class="hero">
+            <h1>连接有趣的人，分享精彩的事</h1>
+            <p>在这里，你可以加入群组畅聊，创建专属圈子，私聊好友，还能在八卦墙分享新鲜事</p>
+        </div>
+
+        <div class="features">
+            <div class="feature-card">
+                <h3>群组聊天</h3>
+                <p>创建或加入兴趣群组，和志同道合的人实时交流</p>
+                <button>进入群组</button>
+            </div>
+            <div class="feature-card">
+                <h3>私聊好友</h3>
+                <p>一对一私密聊天，分享专属话题</p>
+                <button>找好友聊聊</button>
+            </div>
+            <div class="feature-card">
+                <h3>兴趣圈子</h3>
+                <p>类似喜马拉雅圈子，分享动态、讨论专属领域</p>
+                <button>浏览圈子</button>
+            </div>
+            <div class="feature-card">
+                <h3>八卦墙</h3>
+                <p>匿名或公开分享新鲜事，围观热门话题</p>
+                <button>去看看</button>
+            </div>
+        </div>
+
+        <div class="gossip-wall">
+            <h2>热门八卦墙</h2>
+            <div class="gossip-item">
+                <div class="content">听说隔壁班的小明要去参加选秀了？</div>
+                <div class="meta">发布于 2小时前 · 32人点赞 · 15条评论</div>
+            </div>
+            <div class="gossip-item">
+                <div class="content">学校门口新开的奶茶店买一送一，快去冲！</div>
+                <div class="meta">发布于 5小时前 · 88人点赞 · 32条评论</div>
+            </div>
+            <div class="gossip-item">
+                <div class="content">今天的晚霞也太好看了吧！谁拍到了？</div>
+                <div class="meta">发布于 昨天 · 125人点赞 · 56条评论</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- 交互逻辑 -->
+    <script>
+        // 初始化 Supabase
+        const supabaseUrl = 'https://ctvqjojvaeuvkwztsypr.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN0dnFqb2p2YWV1dmt3enRzeXByIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIyOTkwOTcsImV4cCI6MjA2Nzg3NTA5N30.puI7VQhh2ffCIW--aIyQoh1awuOJKnVXTLt3fcgqtco';
+        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+        // 弹窗控制
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) modal.style.display = 'block';
+        }
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) modal.style.display = 'none';
+        }
+
+        // 注册按钮绑定
+        document.getElementById('registerBtn').addEventListener('click', () => {
+            openModal('registerModal');
+        });
+
+        // 注册逻辑（昵称+密码）
+        document.getElementById('submitRegister').addEventListener('click', async () => {
+            const nickname = document.getElementById('regNickname').value.trim();
+            const password = document.getElementById('regPassword').value;
+
+            if (!nickname || !password) {
+                alert('请填写昵称和密码');
+                return;
+            }
+
+            // 检查昵称是否已存在
+            const { data: existing } = await supabase
+                .from('users')
+                .select('nickname')
+                .eq('nickname', nickname)
+                .single();
+
+            if (existing) {
+                alert('昵称已被占用，请换一个');
+                return;
+            }
+
+            // 创建匿名用户（用于关联账号）
+            const { data: { user: anonUser }, error: anonError } = await supabase.auth.signInAnonymously();
+            if (anonError) {
+                alert('注册失败：' + anonError.message);
+                return;
+            }
+
+            // 加密密码并存储
+            const hashedPwd = await bcrypt.hash(password, 10);
+            const { error: dbError } = await supabase
+                .from('users')
+                .insert([{
+                    id: anonUser.id,
+                    nickname: nickname,
+                    password: hashedPwd
+                }]);
+
+            if (dbError) {
+                alert('注册失败：' + dbError.message);
+            } else {
+                alert('注册成功！现在可以登录了～');
+                closeModal('registerModal');
+            }
+        });
+
+        // 登录按钮绑定
+        document.getElementById('loginBtn').addEventListener('click', () => {
+            openModal('loginModal');
+        });
+
+        // 登录逻辑（昵称+密码）
+        document.getElementById('submitLogin').addEventListener('click', async () => {
+            const nickname = document.getElementById('loginNickname').value.trim();
+            const password = document.getElementById('loginPassword').value;
+
+            if (!nickname || !password) {
+                alert('请填写昵称和密码');
+                return;
+            }
+
+            // 查询用户信息
+            const { data: user, error: fetchError } = await supabase
+                .from('users')
+                .select('*')
+                .eq('nickname', nickname)
+                .single();
+
+            if (fetchError) {
+                alert('昵称不存在');
+                return;
+            }
+
+            // 验证密码
+            const isPwdValid = await bcrypt.compare(password, user.password);
+            if (!isPwdValid) {
+                alert('密码错误');
+                return;
+            }
+
+            // 登录成功
+            alert(`欢迎回来，${nickname}！`);
+            closeModal('loginModal');
+            
+            // 更新导航栏显示
+            document.getElementById('userActions').innerHTML = `
+                <span>你好，${nickname}</span>
+                <button id="logoutBtn">注销</button>
+            `;
+            document.getElementById('logoutBtn').addEventListener('click', async () => {
+                await supabase.auth.signOut();
+                location.reload();
+            });
+        });
+
+        // 检查登录状态
+        async function checkLogin() {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session) {
+                // 获取当前用户昵称
+                const { data: user } = await supabase
+                    .from('users')
+                    .select('nickname')
+                    .eq('id', session.user.id)
+                    .single();
+
+                if (user) {
+                    document.getElementById('userActions').innerHTML = `
+                        <span>你好，${user.nickname}</span>
+                        <button id="logoutBtn">注销</button>
+                    `;
+                    document.getElementById('logoutBtn').addEventListener('click', async () => {
+                        await supabase.auth.signOut();
+                        location.reload();
+                    });
+                }
+            }
+        }
+        checkLogin();
+    </script>
+</body>
+</html>
