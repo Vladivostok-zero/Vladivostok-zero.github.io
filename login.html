@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 - Vladivostok</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav>
+        <div class="logo">Vladivostok</div>
+        <div class="nav-links">
+            <a href="index.html">首页</a>
+            <a href="#">群组</a>
+            <a href="#">圈子</a>
+            <a href="#">八卦墙</a>
+        </div>
+        <div class="user-actions">
+            <a href="register.html"><button>注册</button></a>
+        </div>
+    </nav>
+
+    <div class="container" style="max-width: 500px; margin-top: 5rem;">
+        <h2 style="text-align: center; margin-bottom: 2rem;">登录账号</h2>
+        <form id="loginForm">
+            <div style="margin-bottom: 1.5rem;">
+                <label for="loginNickname" style="display: block; margin-bottom: 0.5rem;">昵称</label>
+                <input type="text" id="loginNickname" placeholder="请输入昵称" style="width: 100%; padding: 0.7rem; border: 1px solid #ddd; border-radius: 4px;">
+            </div>
+            <div style="margin-bottom: 1.5rem;">
+                <label for="loginPassword" style="display: block; margin-bottom: 0.5rem;">密码</label>
+                <input type="password" id="loginPassword" placeholder="请输入密码" style="width: 100%; padding: 0.7rem; border: 1px solid #ddd; border-radius: 4px;">
+            </div>
+            <button type="button" id="submitLogin" style="width: 100%; padding: 0.7rem; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer;">登录</button>
+            <p style="text-align: center; margin-top: 1rem;">没有账号？<a href="register.html" style="color: #3498db;">去注册</a></p>
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bcryptjs@2.4.3/dist/bcrypt.min.js"></script>
+    <script>
+        // 初始化Supabase
+        const supabaseUrl = 'https://ctvqjojvaeuvkwztsypr.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN0dnFqb2p2YWV1dmt3enRzeXByIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIyOTkwOTcsImV4cCI6MjA2Nzg3NTA5N30.puI7VQhh2ffCIW--aIyQoh1awuOJKnVXTLt3fcgqtco';
+        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+        // 登录逻辑
+        document.getElementById('submitLogin').addEventListener('click', async () => {
+            const nickname = document.getElementById('loginNickname').value.trim();
+            const password = document.getElementById('loginPassword').value;
+
+            if (!nickname || !password) {
+                alert('请填写昵称和密码');
+                return;
+            }
+
+            // 查询用户信息
+            const { data: user, error: fetchError } = await supabase
+                .from('users')
+                .select('*')
+                .eq('nickname', nickname)
+                .single();
+
+            if (fetchError) {
+                alert('昵称不存在');
+                return;
+            }
+
+            // 验证密码
+            const isPwdValid = await bcrypt.compare(password, user.password);
+            if (!isPwdValid) {
+                alert('密码错误');
+                return;
+            }
+
+            // 登录成功（通过Supabase关联用户）
+            const { error: signInError } = await supabase.auth.signInWithPassword({
+                email: `${user.id}@placeholder.com`, // 用用户ID构造临时邮箱（Supabase要求）
+                password: 'temp-password' // 占位密码，实际验证已通过
+            });
+
+            if (signInError) {
+                alert('登录失败：' + signInError.message);
+                return;
+            }
+
+            alert(`欢迎回来，${nickname}！`);
+            window.location.href = 'index.html'; // 登录成功跳首页
+        });
+    </script>
+</body>
+</html>
