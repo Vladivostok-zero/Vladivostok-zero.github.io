@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>注册 - Vladivostok</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav>
+        <div class="logo">Vladivostok</div>
+        <div class="nav-links">
+            <a href="index.html">首页</a>
+            <a href="#">群组</a>
+            <a href="#">圈子</a>
+            <a href="#">八卦墙</a>
+        </div>
+        <div class="user-actions">
+            <a href="login.html"><button>登录</button></a>
+        </div>
+    </nav>
+
+    <div class="container" style="max-width: 500px; margin-top: 5rem;">
+        <h2 style="text-align: center; margin-bottom: 2rem;">创建账号</h2>
+        <form id="registerForm">
+            <div style="margin-bottom: 1.5rem;">
+                <label for="regNickname" style="display: block; margin-bottom: 0.5rem;">昵称（唯一）</label>
+                <input type="text" id="regNickname" placeholder="请输入昵称" style="width: 100%; padding: 0.7rem; border: 1px solid #ddd; border-radius: 4px;">
+            </div>
+            <div style="margin-bottom: 1.5rem;">
+                <label for="regPassword" style="display: block; margin-bottom: 0.5rem;">密码</label>
+                <input type="password" id="regPassword" placeholder="请输入密码" style="width: 100%; padding: 0.7rem; border: 1px solid #ddd; border-radius: 4px;">
+            </div>
+            <button type="button" id="submitRegister" style="width: 100%; padding: 0.7rem; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer;">注册</button>
+            <p style="text-align: center; margin-top: 1rem;">已有账号？<a href="login.html" style="color: #3498db;">去登录</a></p>
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bcryptjs@2.4.3/dist/bcrypt.min.js"></script>
+    <script>
+        // 页面加载完成后执行
+        window.onload = function() {
+            // 初始化Supabase
+            const supabaseUrl = 'https://ctvqjojvaeuvkwztsypr.supabase.co';
+            const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN0dnFqb2p2YWV1dmt3enRzeXByIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIyOTkwOTcsImV4cCI6MjA2Nzg3NTA5N30.puI7VQhh2ffCIW--aIyQoh1awuOJKnVXTLt3fcgqtco';
+            const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+            // 获取注册按钮并绑定点击事件
+            const registerBtn = document.getElementById('submitRegister');
+            if (registerBtn) {
+                // 直接用onclick绑定（确保触发）
+                registerBtn.onclick = async function() {
+                    const nickname = document.getElementById('regNickname').value.trim();
+                    const password = document.getElementById('regPassword').value;
+
+                    // 验证输入
+                    if (!nickname) {
+                        alert('请输入昵称');
+                        return;
+                    }
+                    if (!password) {
+                        alert('请输入密码');
+                        return;
+                    }
+
+                    // 检查昵称是否已存在
+                    const { data: existing, error: selectError } = await supabase
+                        .from('users')
+                        .select('nickname')
+                        .eq('nickname', nickname)
+                        .single();
+
+                    // 处理查询错误（排除"未找到数据"的正常错误）
+                    if (selectError && selectError.code !== 'PGRST116') {
+                        alert('查询失败：' + selectError.message);
+                        return;
+                    }
+
+                    // 昵称已存在
+                    if (existing) {
+                        alert('昵称已被占用，请换一个');
+                        return;
+                    }
+
+                    // 创建匿名用户（Supabase关联）
+                    const { data: { user: anonUser }, error: anonError } = await supabase.auth.signInAnonymously();
+                    if (anonError) {
+                        alert('注册失败：' + anonError.message);
+                        return;
+                    }
+
+                    // 加密密码并存储到数据库
+                    const hashedPwd = await bcrypt.hash(password, 10);
+                    const { error: dbError } = await supabase
+                        .from('users')
+                        .insert([{
+                            id: anonUser.id,
+                            nickname: nickname,
+                            password: hashedPwd
+                        }]);
+
+                    if (dbError) {
+                        alert('注册失败：' + dbError.message);
+                    } else {
+                        alert('注册成功！即将跳转到登录页～');
+                        window.location.href = 'login.html'; // 跳转登录页
+                    }
+                };
+            } else {
+                alert('错误：未找到注册按钮，请检查按钮ID是否为"submitRegister"');
+            }
+        };
+    </script>
+</body>
+</html>
